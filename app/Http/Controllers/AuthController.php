@@ -9,9 +9,17 @@ use Google_Service_Drive;
 
 class AuthController extends Controller
 {
+    const ACCESS_TOKEN_BUNDLE = 'ACCESS_TOKEN_BUNDLE';
+
     public function index(Request $request)
     {
+        if (!session()->exists(self::ACCESS_TOKEN_BUNDLE)) {
+            return redirect()->action('AuthController@authorizeUser');
+        }
 
+        $accessTokenBundle = session()->get(self::ACCESS_TOKEN_BUNDLE);
+        // refresh
+        return $accessTokenBundle;
     }
 
     public function authorizeUser()
@@ -29,8 +37,9 @@ class AuthController extends Controller
         }
 
         $client = $this->createGoogleClient();
-        $accessToken = $client->fetchAccessTokenWithAuthCode($code);
-        return $accessToken;
+        $accessTokenBundle = $client->fetchAccessTokenWithAuthCode($code);
+        session()->put(self::ACCESS_TOKEN_BUNDLE, $accessTokenBundle);
+        return redirect()->action('AuthController@index');
     }
 
     private function createGoogleClient() {

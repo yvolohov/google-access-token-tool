@@ -11,9 +11,6 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
+Route::get('/', 'AuthController@index');
 Route::get('/authorize', 'AuthController@authorizeUser');
 Route::get('/oauth-callback', 'AuthController@oauthCallback');
