@@ -16,3 +16,4 @@ Route::get('/', function () {
 });
 
 Route::get('/authorize', 'AuthController@authorizeUser');
+Route::get('/oauth-callback', 'AuthController@oauthCallback');

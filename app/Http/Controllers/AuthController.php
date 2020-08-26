@@ -14,10 +14,23 @@ class AuthController extends Controller
 
     }
 
-    public function authorizeUser(Request $request)
+    public function authorizeUser()
     {
         $client = $this->createGoogleClient();
         return redirect($client->createAuthUrl());
+    }
+
+    public function oauthCallback(Request $request)
+    {
+        $code = $request->input('code');
+
+        if (empty($code)) {
+            throw new \Exception('Wrong code parameter', 400);
+        }
+
+        $client = $this->createGoogleClient();
+        $accessToken = $client->fetchAccessTokenWithAuthCode($code);
+        return $accessToken;
     }
 
     private function createGoogleClient() {
