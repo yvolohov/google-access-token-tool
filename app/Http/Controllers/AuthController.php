@@ -18,7 +18,14 @@ class AuthController extends Controller
         }
 
         $accessTokenBundle = session()->get(self::ACCESS_TOKEN_BUNDLE);
-        // refresh
+        $client = $this->createGoogleClient();
+        $client->setAccessToken($accessTokenBundle);
+
+        if ($client->isAccessTokenExpired()) {
+            $refreshToken = $accessTokenBundle['refresh_token'];
+            $accessTokenBundle = $client->refreshToken($refreshToken);
+            session()->put(self::ACCESS_TOKEN_BUNDLE, $accessTokenBundle);
+        }
         return $accessTokenBundle;
     }
 
